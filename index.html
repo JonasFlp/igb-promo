@@ -21,7 +21,8 @@
                 extend: {
                     colors: {
                         gold: '#D4AF37',
-                        'accent-red': '#DC2626',
+                        'gold-light': '#F3E5AB',
+                        'brand-red': '#DC2626',
                         dark: '#0A0A0A',
                         'dark-card': '#141414',
                         'dark-border': '#262626'
@@ -34,13 +35,16 @@
         .card-bg {
             background: linear-gradient(180deg, #171717 0%, #0A0A0A 100%);
         }
-        .btn-primary {
-            background-color: #FFFFFF;
-            color: #000000;
+        .btn-red {
+            background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+            color: #FFFFFF;
             transition: all 0.2s ease;
         }
-        .btn-primary:hover {
-            background-color: #E5E5E5;
+        .btn-red:hover {
+            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+        }
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
         }
     </style>
 </head>
@@ -50,12 +54,12 @@
     <header class="border-b border-dark-border bg-black sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-car-side text-white text-xl"></i>
-                <span class="font-extrabold tracking-wider text-base sm:text-lg text-white uppercase">IG B Estética Automotiva</span>
+                <i class="fa-solid fa-car-side text-gold text-xl"></i>
+                <span class="font-extrabold tracking-wider text-base sm:text-lg text-white uppercase">IG B <span class="text-gold">Estética Automotiva</span></span>
             </div>
             
             <div class="flex items-center space-x-3">
-                <button onclick="openCardQrModal()" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-200 border border-dark-border px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
+                <button onclick="openCardQrModal()" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-200 border border-gold/30 px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
                     <i class="fa-solid fa-qrcode text-gold"></i>
                     <span class="hidden sm:inline">QR Code Cartão</span>
                 </button>
@@ -78,15 +82,19 @@
 
         <!-- Banner Promocional -->
         <div class="w-full text-center mb-8">
-            <span class="bg-white/10 text-white border border-white/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Promoção Exclusiva</span>
-            <h1 class="text-3xl sm:text-5xl font-black mt-3 text-white tracking-tight">GANHE 15% OFF</h1>
-            <p class="text-gray-400 text-sm sm:text-base mt-2">Em qualquer modelo de lavagem ou serviço automotivo</p>
+            <span class="bg-brand-red/20 text-brand-red border border-brand-red/40 text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider">
+                <i class="fa-solid fa-fire mr-1 text-gold"></i> Promoção Exclusiva
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-black mt-3 tracking-tight">
+                GANHE <span class="text-gold">15% OFF</span>
+            </h1>
+            <p class="text-gray-300 text-sm sm:text-base mt-2">Em qualquer modelo de lavagem ou serviço automotivo</p>
         </div>
 
         <!-- PASSO 1: Form de Cadastro -->
-        <div id="step-1" class="w-full max-w-md bg-dark-card border border-dark-border rounded-2xl p-6 sm:p-8 shadow-2xl">
+        <div id="step-1" class="w-full max-w-md bg-dark-card border border-gold/30 rounded-2xl p-6 sm:p-8 shadow-2xl gold-border-glow">
             <h2 class="text-lg font-bold text-white mb-2 flex items-center">
-                <span class="bg-white text-black w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2 font-black">1</span>
+                <span class="bg-gold text-black w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2 font-black">1</span>
                 Preencha para Resgatar
             </h2>
             <p class="text-xs text-gray-400 mb-6">Informe seus dados para gerarmos seu voucher individual de desconto.</p>
@@ -94,48 +102,50 @@
             <form id="claim-form" onsubmit="handleStep1Submit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Nome Completo *</label>
-                    <input type="text" id="cust-name" required placeholder="Ex: João Silva" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white">
+                    <input type="text" id="cust-name" required placeholder="Ex: João Silva" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">WhatsApp / Telefone *</label>
-                    <input type="tel" id="cust-phone" required placeholder="(00) 00000-0000" oninput="formatPhone(this)" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white">
+                    <input type="tel" id="cust-phone" required placeholder="(00) 00000-0000" oninput="formatPhone(this)" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Modelo do Veículo *</label>
-                    <input type="text" id="cust-vehicle" required placeholder="Ex: Civic Preto / Hilux Prata" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white">
+                    <input type="text" id="cust-vehicle" required placeholder="Ex: Civic Preto / Hilux Prata" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold">
                 </div>
 
-                <button type="submit" id="btn-submit-form" class="w-full btn-primary font-bold py-3 rounded-lg text-sm mt-4 shadow-lg flex justify-center items-center">
+                <button type="submit" id="btn-submit-form" class="w-full btn-red font-bold py-3 rounded-lg text-sm mt-4 shadow-lg flex justify-center items-center">
                     <span>Avançar para Validação</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <i class="fa-solid fa-arrow-right ml-2 text-gold"></i>
                 </button>
             </form>
         </div>
 
         <!-- PASSO 2: Validação do Instagram -->
-        <div id="step-2" class="hidden w-full max-w-md bg-dark-card border border-dark-border rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
+        <div id="step-2" class="hidden w-full max-w-md bg-dark-card border border-gold/30 rounded-2xl p-6 sm:p-8 shadow-2xl text-center gold-border-glow">
             <h2 class="text-lg font-bold text-white mb-2 flex items-center justify-center">
-                <span class="bg-white text-black w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2 font-black">2</span>
+                <span class="bg-gold text-black w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2 font-black">2</span>
                 Validação Instagram
             </h2>
             <p class="text-xs text-gray-400 mb-6">Para ativar seu cupom de 15% OFF, siga nosso perfil oficial no Instagram.</p>
 
             <div class="bg-black border border-dark-border rounded-xl p-5 mb-6 flex flex-col items-center">
-                <div class="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center mb-3">
-                    <i class="fa-brands fa-instagram text-3xl"></i>
+                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 p-0.5 mb-3">
+                    <div class="w-full h-full bg-black rounded-full flex items-center justify-center">
+                        <i class="fa-brands fa-instagram text-2xl text-white"></i>
+                    </div>
                 </div>
-                <span class="font-bold text-white text-sm">@igb.estetica.automotiva</span>
+                <span class="font-bold text-gold text-sm">@igb.estetica.automotiva</span>
                 <span class="text-xs text-gray-400 mt-0.5">IG B Estética Automotiva</span>
                 
-                <a href="https://www.instagram.com/igb.estetica.automotiva?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" onclick="markInstagramClicked()" class="mt-4 bg-white hover:bg-gray-200 text-black font-bold text-xs px-6 py-2.5 rounded-full flex items-center space-x-2 transition shadow">
+                <a href="https://www.instagram.com/igb.estetica.automotiva?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" onclick="markInstagramClicked()" class="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white font-bold text-xs px-6 py-2.5 rounded-full flex items-center space-x-2 transition shadow">
                     <i class="fa-brands fa-instagram text-sm"></i>
                     <span>SEGUIR AGORA</span>
                 </a>
             </div>
 
             <div class="space-y-3">
-                <button id="btn-generate-voucher" onclick="verifyAndGenerateVoucher()" class="w-full btn-primary font-bold py-3 rounded-lg text-sm shadow-lg flex justify-center items-center">
-                    <i class="fa-solid fa-ticket mr-2"></i>
+                <button id="btn-generate-voucher" onclick="verifyAndGenerateVoucher()" class="w-full btn-red font-bold py-3 rounded-lg text-sm shadow-lg flex justify-center items-center">
+                    <i class="fa-solid fa-ticket mr-2 text-gold"></i>
                     <span>Já Sigo! Gerar Meu Voucher</span>
                 </button>
                 <button onclick="goToStep(1)" class="text-xs text-gray-400 hover:text-white transition">Voltar para dados</button>
@@ -145,34 +155,32 @@
         <!-- PASSO 3: Cartão e Voucher Gerado -->
         <div id="step-3" class="hidden w-full max-w-md flex flex-col items-center">
             
-            <!-- Cartão Digital Promocional (Design Preto/Branco com Destaque Dourado/Vermelho) -->
-            <div id="digital-card" class="w-full card-bg border border-white/20 rounded-2xl p-6 shadow-2xl relative overflow-hidden my-4 text-center">
+            <div id="digital-card" class="w-full card-bg border-2 border-gold/60 rounded-2xl p-6 shadow-2xl relative overflow-hidden my-4 text-center">
                 
                 <!-- Header do Card -->
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-car-side text-white text-lg"></i>
-                        <span class="font-black text-xs tracking-wider text-white uppercase">IG B ESTÉTICA AUTOMOTIVA</span>
+                        <i class="fa-solid fa-car-side text-gold text-lg"></i>
+                        <span class="font-black text-xs tracking-wider text-white uppercase">IG B <span class="text-gold">ESTÉTICA AUTOMOTIVA</span></span>
                     </div>
-                    <!-- Destaque Vermelho: Alerta de Uso Único -->
-                    <span class="bg-accent-red/20 text-accent-red border border-accent-red/40 text-[10px] font-bold px-2 py-0.5 rounded">USO ÚNICO</span>
+                    <span class="bg-brand-red/20 text-brand-red border border-brand-red/40 text-[10px] font-bold px-2 py-0.5 rounded">USO ÚNICO</span>
                 </div>
 
                 <!-- Valor do Desconto -->
                 <div class="my-4">
                     <span class="text-xs uppercase tracking-widest text-gray-400 block mb-1">Cupom de Desconto Exclusivo</span>
                     <h2 class="text-4xl font-black text-white tracking-tight">15% OFF</h2>
-                    <p class="text-xs text-gray-300 mt-1">Em qualquer modelo de lavagem</p>
+                    <p class="text-xs text-gold mt-1">Em qualquer modelo de lavagem</p>
                 </div>
 
-                <!-- Código Sequencial (Destaque Dourado Coadjuvante) -->
-                <div class="bg-black border border-gold/50 rounded-xl py-3 px-4 my-4 shadow-inner">
+                <!-- Código Sequencial -->
+                <div class="bg-black border border-gold/60 rounded-xl py-3 px-4 my-4 shadow-inner">
                     <span class="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Seu Código Voucher</span>
                     <span id="voucher-code-display" class="text-2xl font-mono font-bold tracking-widest text-gold">IGB-000</span>
                 </div>
 
                 <!-- Dados do Titular -->
-                <div class="text-left bg-black/60 rounded-lg p-3 text-xs space-y-1 text-gray-300 border border-dark-border">
+                <div class="text-left bg-black/70 rounded-lg p-3 text-xs space-y-1 text-gray-300 border border-dark-border">
                     <p><strong class="text-gray-400">Titular:</strong> <span id="card-cust-name" class="text-white">-</span></p>
                     <p><strong class="text-gray-400">Telefone:</strong> <span id="card-cust-phone" class="text-white">-</span></p>
                     <p><strong class="text-gray-400">Veículo:</strong> <span id="card-cust-vehicle" class="text-white">-</span></p>
@@ -188,11 +196,11 @@
             <!-- Ações após gerar -->
             <div class="w-full space-y-3 mt-2">
                 <button onclick="downloadCardImage()" class="w-full bg-dark-card hover:bg-neutral-800 text-white font-semibold py-2.5 rounded-lg text-xs transition border border-dark-border flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-download"></i>
+                    <i class="fa-solid fa-download text-gold"></i>
                     <span>Baixar Imagem do Voucher</span>
                 </button>
                 
-                <a id="whatsapp-share-btn" href="#" target="_blank" class="w-full bg-white hover:bg-gray-200 text-black font-bold py-3 rounded-lg text-xs transition flex items-center justify-center space-x-2 shadow-lg">
+                <a id="whatsapp-share-btn" href="#" target="_blank" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg text-xs transition flex items-center justify-center space-x-2 shadow-lg">
                     <i class="fa-brands fa-whatsapp text-base"></i>
                     <span>Agendar Serviço pelo WhatsApp</span>
                 </a>
@@ -203,9 +211,9 @@
 
     </main>
 
-    <!-- Modal QR Code do Cartão (Para a Gráfica) -->
+    <!-- Modal QR Code do Cartão -->
     <div id="modal-card-qr" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-dark-card border border-dark-border rounded-2xl max-w-sm w-full p-6 text-center relative">
+        <div class="bg-dark-card border border-gold/30 rounded-2xl max-w-sm w-full p-6 text-center relative">
             <button onclick="closeCardQrModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
@@ -233,7 +241,7 @@
             </button>
 
             <div class="text-center mb-4">
-                <i class="fa-solid fa-lock text-white text-2xl mb-2"></i>
+                <i class="fa-solid fa-lock text-gold text-2xl mb-2"></i>
                 <h3 class="text-lg font-bold text-white">Área Restrita ADM</h3>
                 <p class="text-xs text-gray-400">Acesso exclusivo para funcionários</p>
             </div>
@@ -242,13 +250,13 @@
                 <div>
                     <label class="block text-xs text-gray-300 mb-1">Senha de Acesso</label>
                     <div class="relative">
-                        <input type="password" id="admin-password-input" required class="w-full bg-black border border-dark-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white pr-10">
+                        <input type="password" id="admin-password-input" required class="w-full bg-black border border-dark-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold pr-10">
                         <button type="button" onclick="togglePasswordVisibility()" class="absolute right-2 top-2.5 text-gray-400 hover:text-white text-xs">
                             <i id="eye-icon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full btn-primary font-bold py-2 rounded-lg text-xs">
+                <button type="submit" class="w-full btn-red font-bold py-2 rounded-lg text-xs">
                     Entrar no Painel
                 </button>
             </form>
@@ -259,11 +267,10 @@
     <div id="modal-admin-panel" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 overflow-y-auto p-4 sm:p-6">
         <div class="max-w-5xl mx-auto bg-dark-card border border-dark-border rounded-2xl p-4 sm:p-6 shadow-2xl my-6">
             
-            <!-- Topbar Painel -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-dark-border">
                 <div>
                     <h2 class="text-xl font-bold text-white flex items-center">
-                        <i class="fa-solid fa-chart-line text-white mr-2"></i>
+                        <i class="fa-solid fa-chart-line text-gold mr-2"></i>
                         Painel de Controle ADM - Vouchers
                     </h2>
                     <p class="text-xs text-gray-400">Gerenciamento e validação de cupons da promoção (500 cartões)</p>
@@ -272,7 +279,7 @@
                     <button onclick="openChangePasswordModal()" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-gray-300 px-3 py-1.5 rounded-lg border border-dark-border transition">
                         <i class="fa-solid fa-key mr-1 text-gold"></i> Alterar Senha ADM
                     </button>
-                    <button onclick="closeAdminPanel()" class="text-xs bg-accent-red/20 hover:bg-accent-red/40 text-accent-red px-3 py-1.5 rounded-lg border border-accent-red/40 transition">
+                    <button onclick="closeAdminPanel()" class="text-xs bg-brand-red/20 hover:bg-brand-red/40 text-brand-red px-3 py-1.5 rounded-lg border border-brand-red/40 transition">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Sair
                     </button>
                 </div>
@@ -290,7 +297,7 @@
                 </div>
                 <div class="bg-black border border-dark-border rounded-xl p-3">
                     <span class="text-[10px] text-gray-400 uppercase block">Utilizados (Baixados)</span>
-                    <span id="metric-used" class="text-xl font-bold text-accent-red">0</span>
+                    <span id="metric-used" class="text-xl font-bold text-brand-red">0</span>
                 </div>
                 <div class="bg-black border border-dark-border rounded-xl p-3">
                     <span class="text-[10px] text-gray-400 uppercase block">Disponíveis</span>
@@ -299,12 +306,12 @@
             </div>
 
             <!-- Busca & Validação de Balcão -->
-            <div class="bg-black border border-dark-border rounded-xl p-4 mb-6">
-                <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Validar Voucher do Cliente no Balcão</h3>
+            <div class="bg-black border border-gold/30 rounded-xl p-4 mb-6">
+                <h3 class="text-xs font-bold text-gold uppercase tracking-wider mb-2">Validar Voucher do Cliente no Balcão</h3>
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="admin-search-code" placeholder="Digite o código (ex: IGB-001) ou Telefone" class="flex-grow bg-dark-card border border-dark-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white">
-                    <button onclick="searchAndValidateVoucher()" class="bg-accent-red hover:bg-red-700 text-white font-bold text-xs px-5 py-2 rounded-lg flex items-center justify-center space-x-1 transition">
-                        <i class="fa-solid fa-check-double"></i>
+                    <input type="text" id="admin-search-code" placeholder="Digite o código (ex: IGB-001) ou Telefone" class="flex-grow bg-dark-card border border-dark-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                    <button onclick="searchAndValidateVoucher()" class="btn-red font-bold text-xs px-5 py-2 rounded-lg flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-check-double text-gold"></i>
                         <span>DAR BAIXA NO CUPOM</span>
                     </button>
                 </div>
@@ -365,7 +372,7 @@
                     <label class="block text-gray-300 mb-1">Confirmar Nova Senha</label>
                     <input type="password" id="pw-confirm" required class="w-full bg-black border border-dark-border rounded-lg px-3 py-2 text-white">
                 </div>
-                <button type="submit" class="w-full btn-primary font-bold py-2 rounded-lg mt-2">
+                <button type="submit" class="w-full btn-red font-bold py-2 rounded-lg mt-2">
                     Salvar Nova Senha
                 </button>
             </form>
@@ -470,9 +477,11 @@
         function handleStep1Submit(event) {
             event.preventDefault();
             
+            const rawPhone = document.getElementById('cust-phone').value.trim();
+
             currentCustomerData = {
                 name: document.getElementById('cust-name').value.trim(),
-                phone: document.getElementById('cust-phone').value.trim(),
+                phone: rawPhone,
                 vehicle: document.getElementById('cust-vehicle').value.trim()
             };
 
@@ -483,70 +492,81 @@
             hasClickedInstagram = true;
         }
 
-        // Gerar Voucher no Passo 2 (Com Trava de 1 Uso por Pessoa)
+        // Gerar Voucher no Passo 2 (Com Trava Definitiva e Mensagem Discreta)
         async function verifyAndGenerateVoucher() {
             const btn = document.getElementById('btn-generate-voucher');
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Validando...`;
 
             try {
-                // 1. Checa no Supabase se este Telefone já resgatou anteriormente
-                const { data: existingUser } = await supabaseClient
-                    .from('vouchers')
-                    .select('code')
-                    .eq('customer_phone', currentCustomerData.phone)
-                    .maybeSingle();
+                const rawPhone = currentCustomerData.phone;
 
-                if (existingUser) {
-                    // Mensagem Genérica para não expor a lógica de trava
+                // 1. Consulta direta no Supabase se o telefone já foi cadastrado
+                const { data: existingUser, error: searchError } = await supabaseClient
+                    .from('vouchers')
+                    .select('code, customer_phone')
+                    .eq('customer_phone', rawPhone)
+                    .not('customer_phone', 'is', null);
+
+                if (existingUser && existingUser.length > 0) {
                     alert("Atenção: Promoção limitada a 1 uso por pessoa.");
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2"></i> Já Sigo! Gerar Meu Voucher`;
+                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
                     return;
                 }
 
-                // 2. Busca próximo voucher disponível
-                const nextVoucher = vouchersData.find(v => v.status === 'AVAILABLE');
+                // 2. Busca o próximo voucher disponível na sequência
+                const { data: nextVoucher, error: fetchErr } = await supabaseClient
+                    .from('vouchers')
+                    .select('*')
+                    .eq('status', 'AVAILABLE')
+                    .order('id', { ascending: true })
+                    .limit(1)
+                    .single();
 
-                if (!nextVoucher) {
+                if (fetchErr || !nextVoucher) {
                     alert("Infelizmente todos os 500 cartões promocionais já foram resgatados!");
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2"></i> Já Sigo! Gerar Meu Voucher`;
+                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
                     return;
                 }
 
-                // 3. Atualiza no Supabase
+                // 3. Tenta reservar e registrar no Supabase
                 const nowIso = new Date().toISOString();
-                const { error } = await supabaseClient
+                const { error: updateError } = await supabaseClient
                     .from('vouchers')
                     .update({
                         status: 'RESERVED',
                         customer_name: currentCustomerData.name,
-                        customer_phone: currentCustomerData.phone,
+                        customer_phone: rawPhone,
                         customer_vehicle: currentCustomerData.vehicle,
                         reserved_at: nowIso
                     })
                     .eq('code', nextVoucher.code);
 
-                if (error) console.warn('Aviso Supabase:', error);
+                // Se o Supabase rejeitar por tentativa de duplicidade no banco (Chave Única)
+                if (updateError) {
+                    if (updateError.code === '23505') {
+                        alert("Atenção: Promoção limitada a 1 uso por pessoa.");
+                    } else {
+                        alert("Ocorreu um erro ao gerar o cupom. Tente novamente.");
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
+                    return;
+                }
 
-                // 4. Atualiza Estado Local
-                nextVoucher.status = 'RESERVED';
-                nextVoucher.customer_name = currentCustomerData.name;
-                nextVoucher.customer_phone = currentCustomerData.phone;
-                nextVoucher.customer_vehicle = currentCustomerData.vehicle;
-                nextVoucher.reserved_at = nowIso;
-
+                // 4. Se deu tudo certo, exibe o cartão do voucher
                 displayVoucherCard(nextVoucher);
                 goToStep(3);
-                updateMetricsAndCounts();
+                await syncVouchersWithSupabase();
 
             } catch (err) {
                 console.error(err);
-                alert("Ocorreu um erro ao gerar o cupom. Tente novamente.");
+                alert("Ocorreu um erro de conexão. Tente novamente.");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-ticket mr-2"></i> Já Sigo! Gerar Meu Voucher`;
+                btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
             }
         }
 
@@ -561,7 +581,7 @@
             document.getElementById('card-date').innerText = today;
 
             // Link WhatsApp
-            const phoneClean = '5511999999999'; // Substitua pelo WhatsApp oficial do seu estabelecimento
+            const phoneClean = '5511999999999'; // Substitua pelo número do WhatsApp oficial do estabelecimento
             const msg = encodeURIComponent(`Olá! Resgatei meu cupom de 15% OFF (${voucher.code}) para o veículo ${currentCustomerData.vehicle} e gostaria de agendar um serviço!`);
             document.getElementById('whatsapp-share-btn').href = `https://wa.me/${phoneClean}?text=${msg}`;
         }
@@ -649,7 +669,7 @@
                 
                 let statusBadge = `<span class="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px]">DISPONÍVEL</span>`;
                 if (v.status === 'RESERVED') statusBadge = `<span class="bg-amber-950/60 text-gold border border-gold/40 px-2 py-0.5 rounded text-[10px]">RESGATADO</span>`;
-                if (v.status === 'USED') statusBadge = `<span class="bg-red-950/60 text-accent-red border border-accent-red/40 px-2 py-0.5 rounded text-[10px]">UTILIZADO</span>`;
+                if (v.status === 'USED') statusBadge = `<span class="bg-red-950/60 text-brand-red border border-brand-red/40 px-2 py-0.5 rounded text-[10px]">UTILIZADO</span>`;
 
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-white">${v.code}</td>
@@ -659,7 +679,7 @@
                     <td class="p-3">${v.customer_vehicle || '-'}</td>
                     <td class="p-3 text-right">
                         ${v.status !== 'USED' ? `
-                            <button onclick="markVoucherAsUsed('${v.code}')" class="bg-accent-red hover:bg-red-700 text-white text-[10px] px-2.5 py-1 rounded transition font-semibold">
+                            <button onclick="markVoucherAsUsed('${v.code}')" class="btn-red text-[10px] px-2.5 py-1 rounded font-semibold">
                                 Dar Baixa
                             </button>
                         ` : `<span class="text-gray-500 text-[10px]">Concluído</span>`}
