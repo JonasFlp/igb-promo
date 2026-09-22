@@ -74,9 +74,11 @@
     <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 flex flex-col items-center justify-center">
 
         <!-- Status Bar -->
-        <div class="w-full max-w-md mb-6 flex justify-between items-center text-xs text-gray-400 bg-dark-card px-4 py-2 rounded-full border border-dark-border">
-            <span id="cloud-status"><i class="fa-solid fa-cloud-check text-green-500 mr-1"></i> Supabase Conectado</span>
-            <span id="vouchers-count">Carregando estoque...</span>
+        <div class="">
+            <span id="cloud-status"><i class="fa-solid fa-cloud-check text-green-500 mr-1"></i> 
+            </span>
+            <span id="vouchers-count">
+            </span>
         </div>
 
         <!-- Banner Promocional -->
@@ -413,11 +415,11 @@
                 }
 
                 updateMetricsAndCounts();
-                document.getElementById('cloud-status').innerHTML = `<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i> Supabase Conectado`;
+                document.getElementById('cloud-status').innerHTML = `<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i>`;
             } catch (err) {
                 console.warn('Erro ao conectar ao Supabase:', err);
                 initializeLocalVouchersPool();
-                document.getElementById('cloud-status').innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-500 mr-1"></i> Modo Offline`;
+                document.getElementById('cloud-status').innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-500 mr-1"></i>`;
             }
         }
 
@@ -444,7 +446,7 @@
             document.getElementById('metric-used').innerText = used;
             document.getElementById('metric-available').innerText = available;
 
-            document.getElementById('vouchers-count').innerText = `${available} de 500 disponíveis`;
+            document.getElementById('vouchers-count')
         }
 
         // Navegação de Passos
@@ -571,18 +573,23 @@
         // Exibir Cartão Digital no Passo 3
         function displayVoucherCard(voucher) {
             document.getElementById('voucher-code-display').innerText = voucher.code;
-            document.getElementById('card-cust-name').innerText = currentCustomerData.name;
-            document.getElementById('card-cust-phone').innerText = currentCustomerData.phoneFormatted;
-            document.getElementById('card-cust-vehicle').innerText = currentCustomerData.vehicle;
+            document.getElementById('card-cust-name').innerText = currentCustomerData.name || '-';
+            
+            // Procura a variável do telefone (com suporte para phone, phoneFormatted ou phoneDigits)
+            const phoneToDisplay = currentCustomerData.phoneFormatted || currentCustomerData.phone || currentCustomerData.phoneDigits || '-';
+            document.getElementById('card-cust-phone').innerText = phoneToDisplay;
+            
+            document.getElementById('card-cust-vehicle').innerText = currentCustomerData.vehicle || '-';
             
             const today = new Date().toLocaleDateString('pt-BR');
             document.getElementById('card-date').innerText = today;
 
-            // Número atualizado e mensagem personalizada
+            // Link fixo para o WhatsApp com o número correto e mensagem personalizada
             const phoneClean = '5517991990943'; 
             const msg = encodeURIComponent(`Resgate IGBPROMO15`);
             document.getElementById('whatsapp-share-btn').href = `https://wa.me/${phoneClean}?text=${msg}`;
         }
+        
 
         // Baixar Imagem do Card
         function downloadCardImage() {
