@@ -54,8 +54,7 @@
     <header class="border-b border-dark-border bg-black sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-car-side text-gold text-xl"></i>
-                <span class="font-extrabold tracking-wider text-base sm:text-lg text-white uppercase">IG B <span class="text-gold">Estética Automotiva</span></span>
+                <img src="logoigb.png" alt="IGB Estética Automotiva" class="h-16 sm:h-20 w-auto object-contain py-1">
             </div>
             
             <div class="flex items-center space-x-3">
@@ -135,7 +134,7 @@
                     </div>
                 </div>
                 <span class="font-bold text-gold text-sm">@igb.estetica.automotiva</span>
-                <span class="text-xs text-gray-400 mt-0.5">IG B Estética Automotiva</span>
+                <span class="text-xs text-gray-400 mt-0.5">IGB Estética Automotiva</span>
                 
                 <a href="https://www.instagram.com/igb.estetica.automotiva?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" onclick="markInstagramClicked()" class="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white font-bold text-xs px-6 py-2.5 rounded-full flex items-center space-x-2 transition shadow">
                     <i class="fa-brands fa-instagram text-sm"></i>
@@ -160,8 +159,7 @@
                 <!-- Header do Card -->
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
                     <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-car-side text-gold text-lg"></i>
-                        <span class="font-black text-xs tracking-wider text-white uppercase">IG B <span class="text-gold">ESTÉTICA AUTOMOTIVA</span></span>
+                        <img src="logoigb.png" alt="IGB Estética Automotiva" class="h-12 sm:h-14 w-auto object-contain">
                     </div>
                     <span class="bg-brand-red/20 text-brand-red border border-brand-red/40 text-[10px] font-bold px-2 py-0.5 rounded">USO ÚNICO</span>
                 </div>
@@ -574,15 +572,15 @@
         function displayVoucherCard(voucher) {
             document.getElementById('voucher-code-display').innerText = voucher.code;
             document.getElementById('card-cust-name').innerText = currentCustomerData.name;
-            document.getElementById('card-cust-phone').innerText = currentCustomerData.phone;
+            document.getElementById('card-cust-phone').innerText = currentCustomerData.phoneFormatted;
             document.getElementById('card-cust-vehicle').innerText = currentCustomerData.vehicle;
             
             const today = new Date().toLocaleDateString('pt-BR');
             document.getElementById('card-date').innerText = today;
 
-            // Link WhatsApp
-            const phoneClean = '5511999999999'; // Substitua pelo número do WhatsApp oficial do estabelecimento
-            const msg = encodeURIComponent(`Olá! Resgatei meu cupom de 15% OFF (${voucher.code}) para o veículo ${currentCustomerData.vehicle} e gostaria de agendar um serviço!`);
+            // Número atualizado e mensagem personalizada
+            const phoneClean = '5517991990943'; 
+            const msg = encodeURIComponent(`Resgate IGBPROMO15`);
             document.getElementById('whatsapp-share-btn').href = `https://wa.me/${phoneClean}?text=${msg}`;
         }
 
