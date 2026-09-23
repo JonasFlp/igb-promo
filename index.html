@@ -44,12 +44,26 @@
         .gold-border-glow {
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
         }
+        /* Animações Toast */
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        }
+        .toast-animate-in { animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast-animate-out { animation: toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="bg-dark text-white min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-dark text-white min-h-screen flex flex-col font-sans antialiased relative">
+
+    <!-- Container do Toast de Notificação -->
+    <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 pointer-events-none"></div>
 
     <!-- Header / Navbar -->
-    <header class="border-b border-dark-border bg-black sticky top-0 z-50">
+    <header class="border-b border-dark-border bg-black sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <img src="logoigb.png" alt="IGB Estética Automotiva" class="h-16 sm:h-20 w-auto object-contain py-1">
@@ -403,6 +417,42 @@
         let currentCustomerData = null;
         let hasClickedInstagram = false;
 
+        // --- SISTEMA DE TOAST NOTIFICAÇÕES ELEGANTES ---
+        function showToast(message, type = 'error') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            
+            let iconClass = 'fa-triangle-exclamation text-brand-red';
+            let borderClass = 'border-brand-red/50';
+            
+            if (type === 'success') {
+                iconClass = 'fa-circle-check text-green-400';
+                borderClass = 'border-green-500/50';
+            } else if (type === 'warning') {
+                iconClass = 'fa-circle-exclamation text-gold';
+                borderClass = 'border-gold/50';
+            }
+
+            toast.className = `bg-dark-card border ${borderClass} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs font-semibold pointer-events-auto toast-animate-in mb-2 gold-border-glow`;
+            toast.innerHTML = `
+                <i class="fa-solid ${iconClass} text-base shrink-0"></i>
+                <span class="flex-grow">${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-animate-in');
+                toast.classList.add('toast-animate-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', async () => {
             await syncVouchersWithSupabase();
@@ -495,13 +545,13 @@
             const cleanPhoneConfirm = rawPhoneConfirm.replace(/\D/g, '');
 
             if (cleanPhone.length < 11) {
-                alert("Por favor, digite o número completo do WhatsApp com DDD (11 dígitos). Ex: (17) 99199-0943");
+                showToast("Por favor, digite o número completo do WhatsApp com DDD (11 dígitos). Ex: (17) 99199-0943", "warning");
                 document.getElementById('cust-phone').focus();
                 return;
             }
 
             if (cleanPhone !== cleanPhoneConfirm) {
-                alert("Os números de telefone digitados não coincidem! Verifique e tente novamente.");
+                showToast("Os números de telefone digitados não coincidem! Verifique novamente.", "error");
                 document.getElementById('cust-phone-confirm').focus();
                 return;
             }
@@ -519,7 +569,7 @@
                 });
 
                 if (isDuplicate) {
-                    alert("Atenção: Promoção limitada a 1 uso por pessoa.");
+                    showToast("Atenção: Promoção limitada a 1 uso por pessoa.", "warning");
                     btn.disabled = false;
                     btn.innerHTML = `<span>Avançar para Validação</span><i class="fa-solid fa-arrow-right ml-2 text-gold"></i>`;
                     return;
@@ -536,7 +586,7 @@
 
             } catch (err) {
                 console.error(err);
-                alert("Erro ao validar dados. Verifique sua conexão.");
+                showToast("Erro ao validar dados. Verifique sua conexão.", "error");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<span>Avançar para Validação</span><i class="fa-solid fa-arrow-right ml-2 text-gold"></i>`;
@@ -561,7 +611,7 @@
             const searchPhoneDigits = searchPhoneRaw.replace(/\D/g, '');
 
             if (searchPhoneDigits.length < 11) {
-                alert("Por favor, digite o número completo do WhatsApp com DDD.");
+                showToast("Por favor, digite o número completo do WhatsApp com DDD.", "warning");
                 return;
             }
 
@@ -580,7 +630,7 @@
                 });
 
                 if (!foundVoucher) {
-                    alert("Nenhum voucher localizado com esse Nome e Telefone. Verifique os dados digitados.");
+                    showToast("Nenhum voucher localizado com esse Nome e Telefone. Verifique os dados digitados.", "error");
                     return;
                 }
 
@@ -594,10 +644,11 @@
                 displayVoucherCard(foundVoucher);
                 closeConsultModal();
                 goToStep(3);
+                showToast("Voucher localizado com sucesso!", "success");
 
             } catch (err) {
                 console.error(err);
-                alert("Erro ao consultar o voucher. Tente novamente.");
+                showToast("Erro ao consultar o voucher. Tente novamente.", "error");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-search mr-2"></i><span>Buscar Meu Voucher</span>`;
@@ -623,7 +674,7 @@
                 });
 
                 if (isDuplicate) {
-                    alert("Atenção: Promoção limitada a 1 uso por pessoa.");
+                    showToast("Atenção: Promoção limitada a 1 uso por pessoa.", "warning");
                     goToStep(1);
                     return;
                 }
@@ -631,7 +682,7 @@
                 const nextVoucher = vouchersData.find(v => v.status === 'AVAILABLE');
 
                 if (!nextVoucher) {
-                    alert("Infelizmente todos os 500 cartões promocionais já foram resgatados!");
+                    showToast("Infelizmente todos os 500 cartões promocionais já foram resgatados!", "warning");
                     return;
                 }
 
@@ -651,7 +702,7 @@
 
                 if (updateError) {
                     console.warn(updateError);
-                    alert("Atenção: Promoção limitada a 1 uso por pessoa.");
+                    showToast("Atenção: Promoção limitada a 1 uso por pessoa.", "warning");
                     goToStep(1);
                     return;
                 }
@@ -665,10 +716,11 @@
                 displayVoucherCard(nextVoucher);
                 goToStep(3);
                 updateMetricsAndCounts();
+                showToast("Voucher gerado com sucesso!", "success");
 
             } catch (err) {
                 console.error(err);
-                alert("Ocorreu um erro de conexão. Tente novamente.");
+                showToast("Ocorreu um erro de conexão. Tente novamente.", "error");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
@@ -710,6 +762,7 @@
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
+                    showToast("Imagem baixada com sucesso!", "success");
                 } catch (e) {
                     console.error("Erro ao converter imagem:", e);
                 }
@@ -746,8 +799,9 @@
                 closeAdminLoginModal();
                 document.getElementById('admin-password-input').value = '';
                 openAdminPanel();
+                showToast("Acesso ADM concedido!", "success");
             } else {
-                alert("Senha incorreta!");
+                showToast("Senha incorreta!", "error");
             }
         }
 
@@ -820,7 +874,7 @@
 
                 renderAdminTable();
                 updateMetricsAndCounts();
-                alert(`Cupom ${code} baixado com sucesso!`);
+                showToast(`Cupom ${code} baixado com sucesso!`, "success");
             }
         }
 
@@ -839,12 +893,12 @@
             });
 
             if (!voucher) {
-                alert("Nenhum cupom encontrado com este código ou telefone.");
+                showToast("Nenhum cupom encontrado com este código ou telefone.", "error");
                 return;
             }
 
             if (voucher.status === 'USED') {
-                alert(`ATENÇÃO: O cupom ${voucher.code} já foi UTILIZADO anteriormente!`);
+                showToast(`ATENÇÃO: O cupom ${voucher.code} já foi UTILIZADO anteriormente!`, "warning");
                 return;
             }
 
@@ -862,17 +916,17 @@
             const conf = document.getElementById('pw-confirm').value;
 
             if (curr !== getAdminPassword()) {
-                alert("Senha atual incorreta!");
+                showToast("Senha atual incorreta!", "error");
                 return;
             }
 
             if (newPw !== conf) {
-                alert("A nova senha e a confirmação não coincidem!");
+                showToast("A nova senha e a confirmação não coincidem!", "error");
                 return;
             }
 
             localStorage.setItem('igb_admin_pw', newPw);
-            alert("Senha alterada com sucesso!");
+            showToast("Senha alterada com sucesso!", "success");
             closeChangePasswordModal();
         }
 
@@ -887,6 +941,7 @@
             link.href = URL.createObjectURL(blob);
             link.download = `Vouchers_IGB_Promocao.csv`;
             link.click();
+            showToast("Relatório CSV gerado!", "success");
         }
     </script>
 </body>
