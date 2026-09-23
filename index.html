@@ -8,8 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Library CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- html2canvas CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Supabase JS Client -->
@@ -58,10 +56,6 @@
             </div>
             
             <div class="flex items-center space-x-3">
-                <button onclick="openCardQrModal()" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-200 border border-gold/30 px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
-                    <i class="fa-solid fa-qrcode text-gold"></i>
-                    <span class="hidden sm:inline">QR Code Cartão</span>
-                </button>
                 <button onclick="openAdminLoginModal()" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-300 border border-dark-border px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Área ADM</span>
@@ -86,11 +80,19 @@
 
         <!-- PASSO 1: Form de Cadastro -->
         <div id="step-1" class="w-full max-w-md bg-dark-card border border-gold/30 rounded-2xl p-6 sm:p-8 shadow-2xl gold-border-glow">
-            <h2 class="text-lg font-bold text-white mb-2 flex items-center">
-                <span class="bg-gold text-black w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2 font-black">1</span>
-                Preencha para Resgatar
-            </h2>
-            <p class="text-xs text-gray-400 mb-6">Informe seus dados para gerarmos seu voucher individual de desconto.</p>
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-lg font-bold text-white flex items-center">
+                    <span class="bg-gold text-black w-6 h-6 rounded-full inline-flex items-center justify-center text-xs mr-2 font-black">1</span>
+                    Preencha para Resgatar
+                </h2>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">Informe seus dados para gerarmos seu voucher individual de desconto.</p>
+
+            <!-- Botão de Consultar Voucher Existente -->
+            <button type="button" onclick="openConsultModal()" class="w-full bg-neutral-900 hover:bg-neutral-800 text-gold border border-gold/40 text-xs font-bold py-2 px-3 rounded-lg mb-6 flex items-center justify-center space-x-2 transition">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Já resgatou? Consultar Meu Voucher</span>
+            </button>
 
             <form id="claim-form" onsubmit="handleStep1Submit(event)" class="space-y-4">
                 <div>
@@ -201,31 +203,44 @@
                     <span>Agendar Serviço pelo WhatsApp</span>
                 </a>
 
+                <button onclick="goToStep(1)" class="w-full text-xs text-gray-400 hover:text-white transition py-1">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Voltar ao início
+                </button>
+
                 <p class="text-[11px] text-center text-gray-500 mt-2">Apresente este código no balcão da recepção para aplicar o desconto.</p>
             </div>
         </div>
 
     </main>
 
-    <!-- Modal QR Code do Cartão -->
-    <div id="modal-card-qr" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-dark-card border border-gold/30 rounded-2xl max-w-sm w-full p-6 text-center relative">
-            <button onclick="closeCardQrModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
+    <!-- Modal Consultar Voucher -->
+    <div id="modal-consult-voucher" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-gold/30 rounded-2xl max-w-sm w-full p-6 relative">
+            <button onclick="closeConsultModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            
-            <h3 class="text-lg font-bold text-white mb-1">QR Code para o Cartão Físico</h3>
-            <p class="text-xs text-gray-400 mb-4">Escaneie com a câmera do celular para testar o acesso ao site da promoção.</p>
 
-            <div class="bg-white p-4 rounded-xl inline-block shadow-lg mb-4">
-                <div id="card-site-qrcode"></div>
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-magnifying-glass text-gold text-2xl mb-2"></i>
+                <h3 class="text-lg font-bold text-white">Consultar Meu Voucher</h3>
+                <p class="text-xs text-gray-400">Informe seu Nome e Telefone para localizar seu cupom resgatado.</p>
             </div>
 
-            <p class="text-[11px] text-gold font-mono break-all mb-4" id="site-url-text">https://seu-site.com</p>
+            <form onsubmit="handleConsultVoucher(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Nome Completo *</label>
+                    <input type="text" id="consult-name" required placeholder="Ex: João Silva" class="w-full bg-black border border-dark-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">WhatsApp / Telefone *</label>
+                    <input type="tel" id="consult-phone" required placeholder="(00) 00000-0000" oninput="formatPhone(this)" class="w-full bg-black border border-dark-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-gold">
+                </div>
 
-            <button onclick="closeCardQrModal()" class="w-full bg-neutral-800 hover:bg-neutral-700 text-white font-semibold py-2 rounded-lg text-xs">
-                Fechar
-            </button>
+                <button type="submit" id="btn-submit-consult" class="w-full btn-red font-bold py-2.5 rounded-lg text-xs flex justify-center items-center">
+                    <i class="fa-solid fa-search mr-2"></i>
+                    <span>Buscar Meu Voucher</span>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -390,7 +405,6 @@
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', async () => {
-            generateQrCodeForSiteCard();
             await syncVouchersWithSupabase();
         });
 
@@ -529,6 +543,67 @@
             }
         }
 
+        // Modal de Consulta do Voucher
+        function openConsultModal() {
+            document.getElementById('modal-consult-voucher').classList.remove('hidden');
+        }
+
+        function closeConsultModal() {
+            document.getElementById('modal-consult-voucher').classList.add('hidden');
+        }
+
+        // Função para Buscar o Voucher Cadastrado
+        async function handleConsultVoucher(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-submit-consult');
+            const searchName = document.getElementById('consult-name').value.trim().toLowerCase();
+            const searchPhoneRaw = document.getElementById('consult-phone').value.trim();
+            const searchPhoneDigits = searchPhoneRaw.replace(/\D/g, '');
+
+            if (searchPhoneDigits.length < 11) {
+                alert("Por favor, digite o número completo do WhatsApp com DDD.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Buscando...`;
+
+            try {
+                await syncVouchersWithSupabase();
+
+                const foundVoucher = vouchersData.find(v => {
+                    if (!v.customer_phone) return false;
+                    const dbPhoneDigits = v.customer_phone.replace(/\D/g, '');
+                    const dbName = (v.customer_name || '').toLowerCase();
+                    
+                    return dbPhoneDigits === searchPhoneDigits && dbName.includes(searchName);
+                });
+
+                if (!foundVoucher) {
+                    alert("Nenhum voucher localizado com esse Nome e Telefone. Verifique os dados digitados.");
+                    return;
+                }
+
+                currentCustomerData = {
+                    name: foundVoucher.customer_name,
+                    phoneFormatted: searchPhoneRaw,
+                    phoneDigits: searchPhoneDigits,
+                    vehicle: foundVoucher.customer_vehicle || '-'
+                };
+
+                displayVoucherCard(foundVoucher);
+                closeConsultModal();
+                goToStep(3);
+
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao consultar o voucher. Tente novamente.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-search mr-2"></i><span>Buscar Meu Voucher</span>`;
+            }
+        }
+
         function markInstagramClicked() {
             hasClickedInstagram = true;
         }
@@ -642,27 +717,6 @@
                 console.error("Erro no html2canvas:", err);
             });
         }
-
-        // QR Code do Site para Imprimir nos Cartões
-        function generateQrCodeForSiteCard() {
-            const qrContainer = document.getElementById('card-site-qrcode');
-            if (!qrContainer) return;
-            qrContainer.innerHTML = '';
-            const currentUrl = window.location.href;
-            document.getElementById('site-url-text').innerText = currentUrl;
-
-            new QRCode(qrContainer, {
-                text: currentUrl,
-                width: 160,
-                height: 160,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-
-        function openCardQrModal() { document.getElementById('modal-card-qr').classList.remove('hidden'); }
-        function closeCardQrModal() { document.getElementById('modal-card-qr').classList.add('hidden'); }
 
         // Login ADM
         function getAdminPassword() {
