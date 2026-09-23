@@ -65,12 +65,21 @@
     <!-- Header / Navbar -->
     <header class="border-b border-dark-border bg-black sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <img src="logoigb.png" alt="IGB Estética Automotiva" class="h-16 sm:h-20 w-auto object-contain py-1">
+            <!-- Logo Clicável para voltar ao início -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToStep(1)">
+                <img src="logoigb.png" alt="IGB Estética Automotiva" class="h-16 sm:h-20 w-auto object-contain py-1 hover:opacity-90 transition">
             </div>
             
-            <div class="flex items-center space-x-3">
-                <button onclick="openAdminLoginModal()" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-300 border border-dark-border px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Botão Central de Ajuda -->
+                <a href="https://wa.me/5517991990943?text=Preciso%20de%20ajuda" target="_blank" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-200 border border-gold/40 px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-headset text-gold"></i>
+                    <span class="hidden sm:inline">Central de Ajuda</span>
+                    <span class="sm:hidden">Ajuda</span>
+                </a>
+
+                <!-- Botão Área ADM -->
+                <button onclick="openAdminLoginModal()" class="text-xs bg-dark-card hover:bg-neutral-800 text-gray-300 border border-dark-border px-3 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-user-shield"></i>
                     <span>Área ADM</span>
                 </button>
@@ -172,7 +181,7 @@
                 
                 <!-- Header do Card -->
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 cursor-pointer" onclick="goToStep(1)">
                         <img src="logoigb.png" alt="IGB Estética Automotiva" class="h-12 sm:h-14 w-auto object-contain">
                     </div>
                     <span class="bg-brand-red/20 text-brand-red border border-brand-red/40 text-[10px] font-bold px-2 py-0.5 rounded">USO ÚNICO</span>
