@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promoção 15% OFF - IG B Estética Automotiva</title>
+    <title>Promoção 15% OFF - IGB Estética Automotiva</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN -->
@@ -73,14 +73,6 @@
     <!-- Main Container -->
     <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 flex flex-col items-center justify-center">
 
-        <!-- Status Bar -->
-        <div class="">
-            <span id="cloud-status"><i class="fa-solid fa-cloud-check text-green-500 mr-1"></i> 
-            </span>
-            <span id="vouchers-count">
-            </span>
-        </div>
-
         <!-- Banner Promocional -->
         <div class="w-full text-center mb-8">
             <span class="bg-brand-red/20 text-brand-red border border-brand-red/40 text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider">
@@ -110,11 +102,15 @@
                     <input type="tel" id="cust-phone" required placeholder="(00) 00000-0000" oninput="formatPhone(this)" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold">
                 </div>
                 <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Confirme o WhatsApp / Telefone *</label>
+                    <input type="tel" id="cust-phone-confirm" required placeholder="(00) 00000-0000" oninput="formatPhone(this)" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold">
+                </div>
+                <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Modelo do Veículo *</label>
                     <input type="text" id="cust-vehicle" required placeholder="Ex: Civic Preto / Hilux Prata" class="w-full bg-black border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold">
                 </div>
 
-                <button type="submit" id="btn-submit-form" class="w-full btn-red font-bold py-3 rounded-lg text-sm mt-4 shadow-lg flex justify-center items-center">
+                <button type="submit" id="btn-submit-step1" class="w-full btn-red font-bold py-3 rounded-lg text-sm mt-4 shadow-lg flex justify-center items-center">
                     <span>Avançar para Validação</span>
                     <i class="fa-solid fa-arrow-right ml-2 text-gold"></i>
                 </button>
@@ -415,11 +411,9 @@
                 }
 
                 updateMetricsAndCounts();
-                document.getElementById('cloud-status').innerHTML = `<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i>`;
             } catch (err) {
                 console.warn('Erro ao conectar ao Supabase:', err);
                 initializeLocalVouchersPool();
-                document.getElementById('cloud-status').innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-500 mr-1"></i>`;
             }
         }
 
@@ -442,11 +436,13 @@
             const used = vouchersData.filter(v => v.status === 'USED').length;
             const available = vouchersData.filter(v => v.status === 'AVAILABLE').length;
 
-            document.getElementById('metric-reserved').innerText = reserved;
-            document.getElementById('metric-used').innerText = used;
-            document.getElementById('metric-available').innerText = available;
+            const resElem = document.getElementById('metric-reserved');
+            const usedElem = document.getElementById('metric-used');
+            const availElem = document.getElementById('metric-available');
 
-            document.getElementById('vouchers-count')
+            if (resElem) resElem.innerText = reserved;
+            if (usedElem) usedElem.innerText = used;
+            if (availElem) availElem.innerText = available;
         }
 
         // Navegação de Passos
@@ -473,93 +469,127 @@
             }
         }
 
-        // Submeter Passo 1
-        function handleStep1Submit(event) {
+        // Submeter Passo 1 - COM DUPLA VALIDAÇÃO DE TELEFONE
+        async function handleStep1Submit(event) {
             event.preventDefault();
             
+            const btn = document.getElementById('btn-submit-step1');
             const rawPhone = document.getElementById('cust-phone').value.trim();
+            const rawPhoneConfirm = document.getElementById('cust-phone-confirm').value.trim();
+            
+            const cleanPhone = rawPhone.replace(/\D/g, '');
+            const cleanPhoneConfirm = rawPhoneConfirm.replace(/\D/g, '');
 
-            currentCustomerData = {
-                name: document.getElementById('cust-name').value.trim(),
-                phone: rawPhone,
-                vehicle: document.getElementById('cust-vehicle').value.trim()
-            };
+            if (cleanPhone.length < 11) {
+                alert("Por favor, digite o número completo do WhatsApp com DDD (11 dígitos). Ex: (17) 99199-0943");
+                document.getElementById('cust-phone').focus();
+                return;
+            }
 
-            goToStep(2);
+            if (cleanPhone !== cleanPhoneConfirm) {
+                alert("Os números de telefone digitados não coincidem! Verifique e tente novamente.");
+                document.getElementById('cust-phone-confirm').focus();
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verificando...`;
+
+            try {
+                await syncVouchersWithSupabase();
+
+                const isDuplicate = vouchersData.some(v => {
+                    if (!v.customer_phone) return false;
+                    const phoneInDbDigits = v.customer_phone.replace(/\D/g, '');
+                    return phoneInDbDigits === cleanPhone;
+                });
+
+                if (isDuplicate) {
+                    alert("Atenção: Promoção limitada a 1 uso por pessoa.");
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>Avançar para Validação</span><i class="fa-solid fa-arrow-right ml-2 text-gold"></i>`;
+                    return;
+                }
+
+                currentCustomerData = {
+                    name: document.getElementById('cust-name').value.trim(),
+                    phoneFormatted: rawPhone,
+                    phoneDigits: cleanPhone,
+                    vehicle: document.getElementById('cust-vehicle').value.trim()
+                };
+
+                goToStep(2);
+
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao validar dados. Verifique sua conexão.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Avançar para Validação</span><i class="fa-solid fa-arrow-right ml-2 text-gold"></i>`;
+            }
         }
 
         function markInstagramClicked() {
             hasClickedInstagram = true;
         }
 
-        // Gerar Voucher no Passo 2 (Com Trava Definitiva e Mensagem Discreta)
+        // Gerar Voucher no Passo 2
         async function verifyAndGenerateVoucher() {
             const btn = document.getElementById('btn-generate-voucher');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Validando...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Gerando Cupom...`;
 
             try {
-                const rawPhone = currentCustomerData.phone;
+                await syncVouchersWithSupabase();
 
-                // 1. Consulta direta no Supabase se o telefone já foi cadastrado
-                const { data: existingUser, error: searchError } = await supabaseClient
-                    .from('vouchers')
-                    .select('code, customer_phone')
-                    .eq('customer_phone', rawPhone)
-                    .not('customer_phone', 'is', null);
+                const isDuplicate = vouchersData.some(v => {
+                    if (!v.customer_phone) return false;
+                    return v.customer_phone.replace(/\D/g, '') === currentCustomerData.phoneDigits;
+                });
 
-                if (existingUser && existingUser.length > 0) {
+                if (isDuplicate) {
                     alert("Atenção: Promoção limitada a 1 uso por pessoa.");
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
+                    goToStep(1);
                     return;
                 }
 
-                // 2. Busca o próximo voucher disponível na sequência
-                const { data: nextVoucher, error: fetchErr } = await supabaseClient
-                    .from('vouchers')
-                    .select('*')
-                    .eq('status', 'AVAILABLE')
-                    .order('id', { ascending: true })
-                    .limit(1)
-                    .single();
+                const nextVoucher = vouchersData.find(v => v.status === 'AVAILABLE');
 
-                if (fetchErr || !nextVoucher) {
+                if (!nextVoucher) {
                     alert("Infelizmente todos os 500 cartões promocionais já foram resgatados!");
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
                     return;
                 }
 
-                // 3. Tenta reservar e registrar no Supabase
                 const nowIso = new Date().toISOString();
+                const phoneToSave = currentCustomerData.phoneFormatted || currentCustomerData.phoneDigits;
+
                 const { error: updateError } = await supabaseClient
                     .from('vouchers')
                     .update({
                         status: 'RESERVED',
                         customer_name: currentCustomerData.name,
-                        customer_phone: rawPhone,
+                        customer_phone: phoneToSave,
                         customer_vehicle: currentCustomerData.vehicle,
                         reserved_at: nowIso
                     })
                     .eq('code', nextVoucher.code);
 
-                // Se o Supabase rejeitar por tentativa de duplicidade no banco (Chave Única)
                 if (updateError) {
-                    if (updateError.code === '23505') {
-                        alert("Atenção: Promoção limitada a 1 uso por pessoa.");
-                    } else {
-                        alert("Ocorreu um erro ao gerar o cupom. Tente novamente.");
-                    }
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-ticket mr-2 text-gold"></i> Já Sigo! Gerar Meu Voucher`;
+                    console.warn(updateError);
+                    alert("Atenção: Promoção limitada a 1 uso por pessoa.");
+                    goToStep(1);
                     return;
                 }
 
-                // 4. Se deu tudo certo, exibe o cartão do voucher
+                nextVoucher.status = 'RESERVED';
+                nextVoucher.customer_name = currentCustomerData.name;
+                nextVoucher.customer_phone = phoneToSave;
+                nextVoucher.customer_vehicle = currentCustomerData.vehicle;
+                nextVoucher.reserved_at = nowIso;
+
                 displayVoucherCard(nextVoucher);
                 goToStep(3);
-                await syncVouchersWithSupabase();
+                updateMetricsAndCounts();
 
             } catch (err) {
                 console.error(err);
@@ -575,7 +605,6 @@
             document.getElementById('voucher-code-display').innerText = voucher.code;
             document.getElementById('card-cust-name').innerText = currentCustomerData.name || '-';
             
-            // Procura a variável do telefone (com suporte para phone, phoneFormatted ou phoneDigits)
             const phoneToDisplay = currentCustomerData.phoneFormatted || currentCustomerData.phone || currentCustomerData.phoneDigits || '-';
             document.getElementById('card-cust-phone').innerText = phoneToDisplay;
             
@@ -584,27 +613,40 @@
             const today = new Date().toLocaleDateString('pt-BR');
             document.getElementById('card-date').innerText = today;
 
-            // Link fixo para o WhatsApp com o número correto e mensagem personalizada
             const phoneClean = '5517991990943'; 
             const msg = encodeURIComponent(`Resgate IGBPROMO15`);
             document.getElementById('whatsapp-share-btn').href = `https://wa.me/${phoneClean}?text=${msg}`;
         }
-        
 
         // Baixar Imagem do Card
         function downloadCardImage() {
             const cardNode = document.getElementById('digital-card');
-            html2canvas(cardNode, { backgroundColor: '#0A0A0A', scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Voucher-IGB-15OFF.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+            html2canvas(cardNode, { 
+                backgroundColor: '#0A0A0A', 
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false
+            }).then(canvas => {
+                try {
+                    const link = document.createElement('a');
+                    link.download = `Voucher-IGB-15OFF.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (e) {
+                    console.error("Erro ao converter imagem:", e);
+                }
+            }).catch(err => {
+                console.error("Erro no html2canvas:", err);
             });
         }
 
         // QR Code do Site para Imprimir nos Cartões
         function generateQrCodeForSiteCard() {
             const qrContainer = document.getElementById('card-site-qrcode');
+            if (!qrContainer) return;
             qrContainer.innerHTML = '';
             const currentUrl = window.location.href;
             document.getElementById('site-url-text').innerText = currentUrl;
@@ -655,7 +697,6 @@
             }
         }
 
-        // Painel ADM
         function openAdminPanel() {
             renderAdminTable();
             document.getElementById('modal-admin-panel').classList.remove('hidden');
@@ -665,8 +706,18 @@
             document.getElementById('modal-admin-panel').classList.add('hidden');
         }
 
+        function formatPhoneDisplay(phoneStr) {
+            if (!phoneStr) return '-';
+            let digits = phoneStr.replace(/\D/g, '');
+            if (digits.length === 11) {
+                return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+            }
+            return phoneStr;
+        }
+
         function renderAdminTable() {
             const tbody = document.getElementById('admin-vouchers-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             vouchersData.forEach(v => {
@@ -680,7 +731,7 @@
                     <td class="p-3 font-mono font-bold text-white">${v.code}</td>
                     <td class="p-3">${statusBadge}</td>
                     <td class="p-3">${v.customer_name || '-'}</td>
-                    <td class="p-3">${v.customer_phone || '-'}</td>
+                    <td class="p-3 font-mono">${formatPhoneDisplay(v.customer_phone)}</td>
                     <td class="p-3">${v.customer_vehicle || '-'}</td>
                     <td class="p-3 text-right">
                         ${v.status !== 'USED' ? `
@@ -723,7 +774,15 @@
             const query = document.getElementById('admin-search-code').value.trim().toUpperCase();
             if (!query) return;
 
-            const voucher = vouchersData.find(v => v.code === query || (v.customer_phone && v.customer_phone.includes(query)));
+            const cleanQuery = query.replace(/\D/g, '');
+
+            const voucher = vouchersData.find(v => {
+                if (v.code === query) return true;
+                if (v.customer_phone && cleanQuery.length > 0) {
+                    return v.customer_phone.replace(/\D/g, '').includes(cleanQuery);
+                }
+                return false;
+            });
 
             if (!voucher) {
                 alert("Nenhum cupom encontrado com este código ou telefone.");
@@ -739,7 +798,6 @@
             document.getElementById('admin-search-code').value = '';
         }
 
-        // Alterar Senha ADM
         function openChangePasswordModal() { document.getElementById('modal-change-password').classList.remove('hidden'); }
         function closeChangePasswordModal() { document.getElementById('modal-change-password').classList.add('hidden'); }
 
@@ -764,7 +822,6 @@
             closeChangePasswordModal();
         }
 
-        // Exportar CSV
         function exportVouchersCSV() {
             let csv = 'Codigo,Status,Cliente,Telefone,Veiculo\n';
             vouchersData.forEach(v => {
